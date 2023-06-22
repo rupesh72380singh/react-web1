@@ -1,0 +1,644 @@
+ import React, { Component } from 'react'
+ import Newsitem from './Newsitem'
+ import Spinner from './Spinner'
+ import PropTypes from 'prop-types'
+import InfiniteScroll from 'react-infinite-scroll-component'
+ 
+ 
+ export class News extends Component {
+    static defaultProps = {
+        country: 'us',
+        pagesize:5,
+        category: "health"
+    }
+    static propsTypes = {
+        country:PropTypes.string,
+        pagesize: PropTypes.number,
+        category : PropTypes.string,
+    }
+    // article = [
+    //     {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Slashdot.org"
+    //         },
+    //         "author": "BeauHD",
+    //         "title": "Bay Area Woman Is On a Crusade To Prove Yelp Reviews Can't Be Trusted",
+    //         "description": "An anonymous reader quotes a report from SFGATE: A strange letter showed up on Kay Dean's doorstep. It was 2017, and the San Jose resident had left a onestar review on the Yelp page of a psychiatry office in Los Altos. Then the letter arrived: It seemed the …",
+    //         "url": "https://tech.slashdot.org/story/23/06/14/2120248/bayareawomanisonacrusadetoproveyelpreviewscantbetrusted",
+    //         "urlToImage": "https://a.fsdn.com/sd/topics/internet_64.png",
+    //         "publishedAt": "20230615T00:02:00Z",
+    //         "content": "A strange letter showed up on Kay Dean's doorstep. It was 2017, and the San Jose resident had left a onestar review on the Yelp page of a psychiatry office in Los Altos. Then the letter arrived: It … [+2184 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Inverse"
+    //         },
+    //         "author": "John Gruber",
+    //         "title": "Apple’s Game Porting Toolkit Is Already Showing Results",
+    //         "description": "The truism that Macs can't play real PC games could be on the verge of changing thanks to the new Game Porting Toolkit in macOS Sonoma that lets developers easily port over DirectX 12compatible PC games. Hobbyists have already gotten Grand Theft Auto V, Diab…",
+    //         "url": "https://www.inverse.com/tech/macdirectx12gameportingtoolkitpcgames",
+    //         "urlToImage": "https://imgix.bustle.com/uploads/image/2023/6/13/1b27cff36fc84f88b86f6447b5e919a9dsc094854.jpg?w=1200&h=630&fit=crop&crop=faces&fm=jpg",
+    //         "publishedAt": "20230615T01:18:20Z",
+    //         "content": "At WWDC last week, most of the focus was rightfully on the new Apple Vision Pro headset and the new visionOS. Apple announced three new Macs the 15inch MacBook Air, M2 Max/Ultra Mac Studio, and M2 U… [+9012 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Elespanol.com"
+    //         },
+    //         "author": "Alvarez del Vayo",
+    //         "title": "Google no quiere 'tablets' para trabajar: su estrategia con la que busca alejarse del iPad",
+    //         "description": "El gigante de Mountain View ha metido el pie en el negocio de las tablets con Android, pero lo ha hecho con un enfoque diferente al de otras marcas.",
+    //         "url": "https://www.elespanol.com/elandroidelibre/noticiasynovedades/20230615/googlenoquieretabletstrabajarestrategiaalejarse/767673349_0.html",
+    //         "urlToImage": "https://s1.eestatic.com/2023/04/18/elandroidelibre/757184289_233955681_1200x630.jpg",
+    //         "publishedAt": "20230615T00:47:00Z",
+    //         "content": "El iPhone es uno de los smartphones más influyentes de la historia, por más que su cuota de mercado en países como España no sea tan alta como en otros. Pero su origen no estaba planificado como algo… [+5135 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "CNET"
+    //         },
+    //         "author": "Nina Raemont",
+    //         "title": "Netflix Could Be Going Into Live Sports Events  CNET",
+    //         "description": "A celebrity golf tournament would be set in Las Vegas, according to The Wall Street Journal.",
+    //         "url": "https://www.cnet.com/tech/homeentertainment/netflixcouldbegoingintolivesportsevents/",
+    //         "urlToImage": "https://www.cnet.com/a/img/resize/2e40cb75e14fe90b8da46c6a4e50090511877fb2/hub/2022/04/27/28739ebc867f4f31b78ec252d5c49c4b/netflixlogo2022521.jpg?auto=webp&fit=crop&height=675&width=1200",
+    //         "publishedAt": "20230615T00:19:19Z",
+    //         "content": "Netflix is eyeing live sports events, a report says, with the streaming giant reportedly set to enter its livestreamedsports era with a celebrity golf tournament. Netflix is in talks to launch a tou… [+1321 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "IndieWire"
+    //         },
+    //         "author": "Samantha Bergeson",
+    //         "title": "Tom Holland Is Proud of His GenderBending ‘Lip Sync Battle’ Performance, but ‘You’d Never Catch Me Doing That Now’",
+    //         "description": "\"I don’t want to do a f*cking TV show that I don’t need to do,\" Holland said.",
+    //         "url": "https://www.indiewire.com/news/breakingnews/tomhollandlipsyncbattleperformance1234874824/",
+    //         "urlToImage": "https://www.indiewire.com/wpcontent/uploads/2023/06/LipSyncBattle.png",
+    //         "publishedAt": "20230615T01:00:00Z",
+    //         "content": "Tom Holland swears he’s best known for his iconic “Lip Sync Battle” performance to Rihanna’s “Umbrella” across his career accolades. \r\nThe “SpiderMan: No Way Home” actor told The Hollywood Reporter … [+2049 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Forbes"
+    //         },
+    //         "author": "Jon Markman, Contributor, \n Jon Markman, Contributor\n https://www.forbes.com/sites/fastforwardinvesting/",
+    //         "title": "Why Accenture And Cadence Will Be Winners In The Next Phase Of Deglobalization",
+    //         "description": "The world is shrinking and expanding at the same time, which is confusing on the surface but makes a lot of sense if you think about it.",
+    //         "url": "https://www.forbes.com/sites/jonmarkman/2023/06/14/whyaccentureandcadencewillbewinnersinthenextphaseofdeglobalization/",
+    //         "urlToImage": "https://imageio.forbes.com/specialsimages/imageserve/648a5faca83b94a62775c365/0x0.jpg?format=jpg&width=1200",
+    //         "publishedAt": "20230615T00:48:35Z",
+    //         "content": "The Accenture logo is seen in this illustration photo in Warsaw, Poland (Photo by Jaap ... [+] Arriens/NurPhoto via Getty Images)\r\nNurPhoto via Getty Images\r\nInvestors in 2022 have contended with a w… [+4214 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Biztoc.com"
+    //         },
+    //         "author": "investorplace.com",
+    //         "title": "3 Revolutionary Companies With TrillionDollar Potential",
+    //         "description": "InvestorPlace  Stock Market News, Stock Advice & Trading Tips Finding earlystage, revolutionary companies that can become trillion dollar stocks will enable investors to make a great deal of money. The post 3 Revolutionary Companies With TrillionDollar Pot…",
+    //         "url": "https://biztoc.com/x/a6d11cae74fd257a",
+    //         "urlToImage": "https://c.biztoc.com/p/a6d11cae74fd257a/s.webp",
+    //         "publishedAt": "20230615T01:32:14Z",
+    //         "content": "InvestorPlace  Stock Market News, Stock Advice &amp; Trading TipsFinding earlystage, revolutionary companies that can become trillion dollar stocks will enable investors to make a great deal of mon… [+219 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "3dnews.ru"
+    //         },
+    //         "author": null,
+    //         "title": "Спрос на смартфоны Apple в России снижается",
+    //         "description": "Снижение спроса на iPhone и «неконтролируемые поставки» устройств Apple в рамках параллельного импорта привели к тому, что на рынке образовался переизбыток смартфонов, особенно iPhone 14 и iPhone 13. Об этом пишет «Коммерсантъ» со ссылкой на собственный освед…",
+    //         "url": "https://3dnews.ru/1088416/sprosnasmartfoniapplevrossiisnigaetsya",
+    //         "urlToImage": "https://3dnews.ru/assets/external/illustrations/2023/06/15/1088416/39.jpg",
+    //         "publishedAt": "20230615T01:40:00Z",
+    //         "content": "iPhone « » Apple , , iPhone 14 iPhone 13. «» .\r\n: apple.com\r\n,  iPhone. « . Apple , , », — . TelecomDaily , iPhone . , iPhone 14 iPhone 13.\r\n , Apple. , 14 10 % , — 39 36 %. iPhone 610 %. , iPhone … [+209 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Macotakara.jp"
+    //         },
+    //         "author": "danbo",
+    //         "title": "Apple、バグを修正した「Apple Music for Artists 3.2」を配布開始",
+    //         "description": "Apple Music for Artists\r\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<! テキスト >\n\nAppleが、iPhone用Apple Musicのアーティスト向けアプリ「Apple Music for Artists 3.2」を、App Storeにて無料配布を開始しています。\n\nシステム環境は、iOS 15.0、iPadOS 15.0 以降となっています。",
+    //         "url": "https://www.macotakara.jp/etc/category60/entry44915.html",
+    //         "urlToImage": "https://www.macotakara.jp/archives/001/202104/4e8d1aec774848d711fc31aa2c476abd59c88f1adf18c3b6ce4a2c33fa9234e6.png",
+    //         "publishedAt": "20230615T00:29:31Z",
+    //         "content": "AppleiPhoneApple MusicApple Music for Artists 3.2App Store\r\niOS 15.0iPadOS 15.0"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Vnexpress.net"
+    //         },
+    //         "author": "VnExpress",
+    //         "title": "HLV Argentina hy vọng Messi vẫn đá World Cup 2026",
+    //         "description": "Trung Quốc HLV Lionel Scaloni hiểu tâm tư của Lionel Messi, nhưng vẫn hy vọng tiền đạo 35 tuổi đổi ý và cùng tuyển Argentina bảo vệ chức vô địch World Cup 2026.",
+    //         "url": "https://vnexpress.net/hlvargentinahyvongmessivandaworldcup20264617655.html",
+    //         "urlToImage": "https://vcdn1thethao.vnecdn.net/2023/06/15/yclu2d3j5zowzeoxsqj7nrlmtm168325956451686789865.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=A3dcvEnYh25BEcNFFho3BA",
+    //         "publishedAt": "20230615T00:46:39Z",
+    //         "content": "Trung QucHLV Lionel Scaloni hiu tâm t ca Lionel Messi, nhng vn hy vng tin o 35 tui i ý và cùng tuyn Argentina bo v chc vô ch World Cup 2026.Trong cuc phng vn vi kênh Titan Sports ti 13/6, Messi tha n… [+2999 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Vnexpress.net"
+    //         },
+    //         "author": "VnExpress",
+    //         "title": "Thành tựu ba năm phát triển của VieON",
+    //         "description": "Sau ba năm, VieON có đến 43 triệu thiết bị sử dụng, trở thành một trong những OTT hàng đầu của ngành công nghiệp video trực tuyến Việt Nam.",
+    //         "url": "https://vnexpress.net/thanhtuubanamphattriencuavieon4616832.html",
+    //         "urlToImage": "https://vcdn1kinhdoanh.vnecdn.net/2023/06/14/image0011686635372168672789998311686728030.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=gyejfdJy31LBwfvj74sucw",
+    //         "publishedAt": "20230615T01:00:00Z",
+    //         "content": "Sau ba nm, VieON có n 43 triu thit b s dng, tr thành mt trong nhng OTT hàng u ca ngành công nghip video trc tuyn Vit Nam.Ra mt ngày 15/6/2020, VieON  thành viên ca h sinh thái công ngh truyn thông g… [+4279 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": "usatoday",
+    //         "name": "USA Today"
+    //         },
+    //         "author": "Celtics Wire",
+    //         "title": "Catching up with the Boston Celtics’ 2023 NBA draft workouts Part IV",
+    //         "description": "Let's dive into who the Celtics might be targeting at No. 35.",
+    //         "url": "https://celticswire.usatoday.com/lists/nbabostonceltics2023draftcatchupiv/",
+    //         "urlToImage": "https://s.yimg.com/ny/api/res/1.2/z8NALSWvo246K_0U2Ru1yw/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA/https://media.zenfs.com/en/celtics_wire_usa_today_sports_articles_699/e6e7dd15b50b90c47a989bd9188e0e62",
+    //         "publishedAt": "20230615T00:39:59Z",
+    //         "content": "Even with the offseason here in earnest, the Boston Celtics have plenty on their plate regarding their future as they continue to work out prospects projected to go in the second round of the 23 NBA … [+4436 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Appps.jp"
+    //         },
+    //         "author": "saki",
+    //         "title": "macOS14 Sonoma従来のメールプラグインのサポートを終了！一部のアプリ利用できず",
+    //         "description": "Appleは、WWDC2023で新しいオペレーティングシステムを発表し、現在、macOS14 Sonoma開発者ベータ1がリリースされていますが、一部のメールアプリが動作せず利用できなくなったとのことです。",
+    //         "url": "https://www.appps.jp/377479/",
+    //         "urlToImage": "https://www.appps.jp/wpcontent/uploads/2023/06/dljgoe.jpg",
+    //         "publishedAt": "20230615T01:29:22Z",
+    //         "content": "AppleWWDC2023macOS14 Sonoma1\r\nApplemacOS13\r\nMac\r\nApplemacOS14 SonomaMailKit API\r\n9to5MacAppleMailKit API\r\nPSA: Confirmed in WWDC labs that legacy Mail plugins are NOT supported on macOS Sonoma. Mail… [+351 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Maketecheasier.com"
+    //         },
+    //         "author": "Alexandra Arici",
+    //         "title": "How to Delete Your Spotify Account",
+    //         "description": "Spotify is a digital music streaming platform that allows users to access a vast majority of songs, albums, and playlists from countless genres and artists. Despite its perks, some users could be looking to leave Spotify behind. Perhaps you wish to try someth…",
+    //         "url": "https://www.maketecheasier.com/deleteyourspotifyaccount/",
+    //         "urlToImage": "https://www.maketecheasier.com/assets/uploads/2023/06/deletespotifyaccountfeatured.jpg",
+    //         "publishedAt": "20230615T00:25:00Z",
+    //         "content": "Spotify is a digital music streaming platform that allows users to access a vast majority of songs, albums, and playlists from countless genres and artists. Despite its perks, some users could be loo… [+7680 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "MMA Fighting"
+    //         },
+    //         "author": "Jed Meshew",
+    //         "title": "No Bets Barred: Breaking down the best bets for UFC Vegas 75, Bellator 297, and PFL 5",
+    //         "description": "Conner Burks and Jed Meshew return with a full breakdown of this weekend’s MMA tripleheader, featuring UFC Vegas 75, Bellator 297, and PFL 5.",
+    //         "url": "https://www.mmafighting.com/2023/6/14/23761060/nobetsbarredbreakingdownthebestbetsforufcvegas75bellator297andpfl5",
+    //         "urlToImage": "https://cdn.voxcdn.com/thumbor/mEn3oc7Q3c_cIwKwj3z0BPjtAxI=/0x0:5568x2915/fitin/1200x630/cdn.voxcdn.com/uploads/chorus_asset/file/24727413/1242925331.jpg",
+    //         "publishedAt": "20230615T01:00:00Z",
+    //         "content": "Marvin Vettori | Photo by JULIEN DE ROSA/AFP via Getty Images\r\n\n \n\n UFC 289 is in the books, but the summer MMA slate is just getting started, as this weekend combat sports fans are treated to an MMA… [+889 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Goodpatch.com"
+    //         },
+    //         "author": "Tomoaki Kuroko",
+    //         "title": "「Apple Vision Pro」は何がヤバいのか、UXデザイナーが12,000文字で徹底解説する【ユースケース編】｜Blog｜Goodpatch グッドパッチ",
+    //         "description": "Appleが次の挑戦として掲げる「Apple Vision Pro」と「空間コンピューティング」。Appleが描く未来は、どのように私たちの生活に浸透していくのか。UXデザイナーの視点から、Apple Vision Proが持つユースケースの可能性を考察していきます。",
+    //         "url": "https://goodpatch.com/blog/202306visionpro02",
+    //         "urlToImage": "https://i0.wp.com/cms.goodpatch.com/wpcontent/uploads/2023/06/eyecatch_visionpro_part21.png?fit=1920%2C1080&ssl=1",
+    //         "publishedAt": "20230615T01:00:35Z",
+    //         "content": "AppleApple Vision ProVision ProXR\r\nUXVision ProAppleSpatial Computing\r\nVision Pro\r\nApple\r\nhttps://youtu.be/TX9qSaGXFyg\r\nVision ProARVR\r\nMeta Quest 2PSVR2AR/VRVision Pro\r\nARVRVision Pro\r\nApple Vision … [+1277 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Overclockers.ru"
+    //         },
+    //         "author": "Niko4123",
+    //         "title": "AMD представила семейство процессоров Zen 4 Ryzen 7000 PRO",
+    //         "description": "для корпоративных ноутбуков и настольных ПК",
+    //         "url": "https://overclockers.ru/blog/New_Intel_Raptor_ES/show/95799/amdpredstavilasemejstvoprocessorovzen4ryzen7000pro",
+    //         "urlToImage": "https://overclockers.ru/st/legacy/blog/416880/387250_O.png",
+    //         "publishedAt": "20230615T01:25:36Z",
+    //         "content": ", , Raphael, Phoenix.\r\nAMD CES, . , AMD .\r\nRyzen 7000 PRO , \"HS\" TDP 35 54 ( ),  \"U\" TDP 1528 . \"HS\" Zen 4 SMT 5,2 .\r\n ,   . , Ryzen, Phoenix, AMD , , . , \"Ryzen AI\" \" \". \r\nRyzen 7 PRO 7840U Intel … [+241 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Iphonemania.jp"
+    //         },
+    //         "author": "FT729",
+    //         "title": "Apple Watch Ultra用か！？マイクロLEDディスプレイの特許取得",
+    //         "description": "米国特許商標庁（USPTO）が現地時間2023年6月13日、Appleが取得した、マイクロLEDディスプレイに関する特許を公開しました。\n \nマイクロLEDディスプレイは、2025年モデルのApple Watch Ultraから導入されると噂されています。\n\n■3行で分かる、この記事のポイント\n1. Appleが取得したマイクロLEDディスプレイに関する特許が公開された。\n2. マイクロLEDディスプレイは最初に、2025年モデルのApple Watch Ultraに搭載されると噂。\n3. 特許には、マイクロLE…",
+    //         "url": "https://iphonemania.jp/news541749/",
+    //         "urlToImage": "https://iphonemania.jp/uploads/2023/01/21/AppleWatchUltramicroled0121.png",
+    //         "publishedAt": "20230615T01:00:58Z",
+    //         "content": "USPTO2023613AppleLEDLED2025Apple Watch Ultra31. AppleLED2. LED2025Apple Watch Ultra3. LED\r\n20137\r\n20137201312AppleLuxVuePatently AppleLEDLED\r\nLED\r\nAppleLEDSamsung DisplayApple Watch UltraiPhoneiPadSo… [+46 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "The Mac Observer"
+    //         },
+    //         "author": "Nick deCourville",
+    //         "title": "How to Use Google Chrome Parental Controls on Mac and More",
+    //         "description": "There are likely a plethora of users looking for parental controls in Google Chrome for their Mac. When it comes to the internet, virtually anything you can dream of is readily available. While most of this is great for adults, it’s not so great for young chi…",
+    //         "url": "https://www.macobserver.com/tips/parentalcontrolsgooglechrome/",
+    //         "urlToImage": "https://www.macobserver.com/wpcontent/uploads/2023/06/ParentalControlGoogleChromeJune2023Featured.jpg",
+    //         "publishedAt": "20230615T00:06:49Z",
+    //         "content": "There are likely a plethora of users looking for parental controls in Google Chrome for their Mac. When it comes to the internet, virtually anything you can dream of is readily available. While most … [+8339 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Digiday.jp"
+    //         },
+    //         "author": "編集部",
+    //         "title": "Appleの Vision Pro のファッション業界における活用法の可能性：別次元のキャットウォーク体験やVIP顧客へのリーチ",
+    //         "description": "6月5日のApple Conferenceで初めて公開されたApple Vision Proヘッドセットは、ウェアラブル分野に革新をもたらすものだ。ファッション業界の専門家は、2024年の初ローンチから将来にかけてこの新しいヘッドセットの用途の可能性に対して期待を抱いている。\nThe post Appleの Vision Pro のファッション業界における活用法の可能性：別次元のキャットウォーク体験やVIP顧客へのリーチ appeared first on DIGIDAY［日本版］.",
+    //         "url": "https://digiday.jp/glossy/howthefashionindustrywillusetheapplevisionproheadset/",
+    //         "urlToImage": "https://digiday.jp/wpcontent/uploads/2023/06/Screenshot20230607at12.18.23e1686136758456_780.jpg",
+    //         "publishedAt": "20230615T00:50:33Z",
+    //         "content": "65Apple ConferenceApple Vision ProMetaSnap2024\r\n349949Apple Conference\r\nAdvertisement\r\nAppleARVRAppleWeb3MojitoMetaPradaSothebysGivenchyWeb3\r\nAppleAIMetaBodaciousVision ProNikeAmazon Fashion\r\nAppleDi… [+455 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Pajiba.com"
+    //         },
+    //         "author": "Mike Redmond",
+    //         "title": "Rosamund Pike Put Gwyneth Paltrow on Blast",
+    //         "description": "Rosamund Pike is not a fan of the \"wellness industry,\" and yes, that includes Gwyneth Paltrow's Goop empire built on vagina rocks and butt steam. \"#MeToo gave women an opportunity to escape some of the demands put on them. Now,...",
+    //         "url": "https://www.pajiba.com/pajiba_love/rosamundpikeputgwynethpaltrowonblast.php",
+    //         "urlToImage": "https://www.pajiba.com/assets_c/2023/06/rosamundpikegwynethpaltrowthumb700x467254503.jpg",
+    //         "publishedAt": "20230615T01:00:00Z",
+    //         "content": "By Mike Redmond | Pajiba Love | June 14, 2023 | \r\nBy Mike Redmond | Pajiba Love | June 14, 2023 |\r\nRosamund Pike is not a fan of the “wellness industry,” and yes, that includes Gwyneth Paltrow’s Goop… [+2340 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Independent.ie"
+    //         },
+    //         "author": "Apple",
+    //         "title": "Wexford tech prodigy Niall Kehoe eyes US career as he takes Stanford in his stride",
+    //         "description": "How do you go about getting into the world’s top tech college?",
+    //         "url": "https://www.independent.ie/business/technology/wexfordtechprodigyniallkehoeeyesuscareerashetakesstanfordinhisstride/a1530201697.html",
+    //         "urlToImage": "https://focus.independent.ie/thumbor/DS5mr_9q8wBDwRBUs_B3B2Eio=/0x400:1920x1680/1920x1280/prodmhireland/f1620335bb0c449ab9a54693c5ea104e/aa5305f26ba0462880e7419fb11b3fcc/f1620335bb0c449ab9a54693c5ea104e.jpg",
+    //         "publishedAt": "20230615T01:30:00Z",
+    //         "content": "Enniscorthys Niall Kehoe published an app for the Apple App Store by the time he was 10"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Inside the Magic"
+    //         },
+    //         "author": "Jess Colopy",
+    //         "title": "Young Women Report Concerning Trend, Being “Tracked” at Disneyland",
+    //         "description": "Disneyland Resort may be The Happiest Place on Earth, but it’s not the safest. Though most Guests visit the Southern California Disney Parks without issue, violence is an increasing problem at Theme Parks nationwide. Instead of worrying about things like line…",
+    //         "url": "https://insidethemagic.net/2023/06/disneylandresortwomenairpodstrackingjc1/",
+    //         "urlToImage": "https://insidethemagic.net/wpcontent/uploads/2022/12/guestwithplutocaliforniaadventuree1679155220265.jpg",
+    //         "publishedAt": "20230615T01:35:51Z",
+    //         "content": "Disneyland Resort may be The Happiest Place on Earth, but its not the safest.\r\nThough most Guests visit the Southern California Disney Parks without issue, violence is an increasing problem at Theme … [+1856 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Minatokobe.com"
+    //         },
+    //         "author": "酔いどれ",
+    //         "title": "Appleが精神的健康における画期的進展を発表、watchOS 10のマインドフルネス機能の詳細解説",
+    //         "description": "WWDC 2023でたくさんの発表がありましたが、その中でも最も注目すべきは、Appleが精神健康分野で行っている取り組みです Apple Watchを使ってフィットネスを記録できます、ウォーキング、ランニング、ハイキング、ジムでのトレーニングなど、さまざまな身体活動をWorkoutアプリで記録することが出来ます ワークアウトアプリは300万種類のワークアウトに対応しているので、そんなに多くないかもしれませんが、現時点ではかなり包括的です Lifesumではバーコードをスキャンするだけで食べ物の記録が簡単にでき、…",
+    //         "url": "https://minatokobe.com/wp/apple/applewatch/post90437.html",
+    //         "urlToImage": "https://minatokobe.com/wp/wpcontent/uploads/2023/06/Mindfulness.jpg",
+    //         "publishedAt": "20230615T01:22:13Z",
+    //         "content": "1990Mac IIci MacMac Studio M1 MAX + Studio Display,16inch MacBook Pro M1 Pro 2021, iPhone 14 Pro Max, iPhone 13 Pro Max, 12.9inch iPad Pro 2021, iPad Air,  Apple Watch Ultra, 1HomePodApple TV 4KApple… [+43 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Eyeoftheflyer.com"
+    //         },
+    //         "author": "Chris Carley",
+    //         "title": "Earn Up to 12% Cash Back on Uber Gift Cards!",
+    //         "description": "If you’re in the market for a discounted Uber gift card, then grab your party hat — and join us at a buying party this Thursday morning! Cashback app Fluz hosts “virtual parties” during which members can earn cash back for purchasing featured digital gift car…",
+    //         "url": "https://eyeoftheflyer.com/2023/06/14/discountubergiftcardsfluz/",
+    //         "urlToImage": "https://eyeoftheflyer.com/wpcontent/uploads/2020/11/Ubertaxiscaled.jpg",
+    //         "publishedAt": "20230615T00:07:32Z",
+    //         "content": "Eye of the Flyer, a division of Chatterbox Entertainment, Inc. has partnered with CardRatings for our coverage of credit card products. Eye of the Flyer and CardRatings may receive a commission from … [+4427 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Biztoc.com"
+    //         },
+    //         "author": "cnbc.com",
+    //         "title": "Here’s our Monthly Meeting rapidfire update on all 35 stocks in the Club’s portfolio",
+    //         "description": "Here's a rapidfire update on all 35 stocks in Jim Cramer's Charitable Trust, the portfolio we use for the CNBC Investing Club. Jim ran through each name during our June Monthly Meeting on Wedensday. Apple (AAPL): After jumping more 40% yeartodate, the iPho…",
+    //         "url": "https://biztoc.com/x/7f39f55de6aea38f",
+    //         "urlToImage": "https://c.biztoc.com/p/7f39f55de6aea38f/og.webp",
+    //         "publishedAt": "20230615T01:10:09Z",
+    //         "content": "Here's a rapidfire update on all 35 stocks in Jim Cramer's Charitable Trust, the portfolio we use for the CNBC Investing Club. Jim ran through each name during our June Monthly Meeting on Wedensday.… [+287 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Biztoc.com"
+    //         },
+    //         "author": "cryptopotato.com",
+    //         "title": "Jack DorseyBacked Damus Faces Explusion From Apple’s App Store Over Bitcoin Tipping Feature",
+    //         "description": "Apple has issued a warning to the decentralized social networking company, Damus with expulsion from the App Store if it does not remove a feature that enables Bitcoin payments. Damus, which is based on top of a decentralized social media protocol Nostr, was …",
+    //         "url": "https://biztoc.com/x/d2ec154e4a1b11cb",
+    //         "urlToImage": "https://c.biztoc.com/p/d2ec154e4a1b11cb/s.webp",
+    //         "publishedAt": "20230615T00:04:05Z",
+    //         "content": "Apple has issued a warning to the decentralized social networking company, Damus with expulsion from the App Store if it does not remove a feature that enables Bitcoin payments.Damus, which is based … [+311 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Biztoc.com"
+    //         },
+    //         "author": "zerohedge.com",
+    //         "title": "Amazon Locks Man Out Of Smart Home Devices Over False Racism Claims",
+    //         "description": "Amazon Locks Man Out Of Smart Home Devices Over False Racism Claims Amazon locked a Microsoft engineer out of his smart home devices for nearly a week after a delivery driver accused him of uttering a racial slur. According to a June 4 blog post on Medium, Br…",
+    //         "url": "https://biztoc.com/x/15ff02d0963bb02e",
+    //         "urlToImage": "https://c.biztoc.com/p/15ff02d0963bb02e/s.webp",
+    //         "publishedAt": "20230615T00:08:05Z",
+    //         "content": "Amazon Locks Man Out Of Smart Home Devices Over False Racism Claims\r\nAmazon locked a Microsoft engineer out of his smart home devices for nearly a week after a delivery driver accused him of uttering… [+289 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Biztoc.com"
+    //         },
+    //         "author": "investorplace.com",
+    //         "title": "7 Stocks That Billionaires Are Buying Up Now",
+    //         "description": "InvestorPlace  Stock Market News, Stock Advice & Trading Tips It's worth considering the stocks that billionaires are buying because they tend to have access to large amounts of information. The post 7 Stocks That Billionaires Are Buying Up Now appeared firs…",
+    //         "url": "https://biztoc.com/x/f9efb41e59aeca16",
+    //         "urlToImage": "https://c.biztoc.com/p/f9efb41e59aeca16/s.webp",
+    //         "publishedAt": "20230615T00:08:18Z",
+    //         "content": "InvestorPlace  Stock Market News, Stock Advice &amp; Trading TipsIt's worth considering the stocks that billionaires are buying because they tend to have access to large amounts of information. The … [+214 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Biztoc.com"
+    //         },
+    //         "author": "npr.org",
+    //         "title": "The Fed decides to wait and see",
+    //         "description": "The Fed just announced a pause on interest rate hikes for the first time in over a year. With inflation still double the Fed's 2% target, what's the plan here? Today on the show, how a shower helps explain the Fed's incremental approach.For sponsorfree episo…",
+    //         "url": "https://biztoc.com/x/41b692f844b9d7f2",
+    //         "urlToImage": "https://c.biztoc.com/p/41b692f844b9d7f2/s.webp",
+    //         "publishedAt": "20230615T00:31:00Z",
+    //         "content": "The Fed just announced a pause on interest rate hikes for the first time in over a year. With inflation still double the Fed's 2% target, what's the plan here? Today on the show, how a shower helps e… [+227 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "pymnts.com"
+    //         },
+    //         "author": "PYMNTS",
+    //         "title": "LVMH Partners With Epic Games to Unleash Immersive Experiences",
+    //         "description": "LVMH Moët Hennessy Louis Vuitton has forged a partnership with the creators of Fortnite, Epic Games, to launch immersive experiences for customers within the virtual world.   Through the collaboration, LVMH is looking to enhance its design pipeline by integra…",
+    //         "url": "https://www.pymnts.com/news/retail/2023/lvmhpartnerswithepicgamestounleashimmersiveexperiences/",
+    //         "urlToImage": "https://content.pymnts.com/wpcontent/uploads/2023/06/LouisvuittonLVMN1000x600.jpg",
+    //         "publishedAt": "20230615T01:20:48Z",
+    //         "content": "LVMH Moët Hennessy Louis Vuitton has forged a partnership with the creators of Fortnite, Epic Games, to launch immersive experiences for customers within the virtual world.  \r\nThrough the collaborati… [+2171 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "DIE WELT"
+    //         },
+    //         "author": "WELT",
+    //         "title": "Kretschmann verteidigt Asylkompromiss: „Das ist doch keine Haft“",
+    //         "description": "Die EUEinigung auf eine Verschärfung des Asylrechts stellt die Grünen vor eine Zerreißprobe. Ein prominenter Grüner bezieht jetzt klare Position: BadenWürttembergs Ministerpräsident Winfried Kretschmann. Wenn nichts getan werde, „platze“ es irgendwann.",
+    //         "url": "https://www.welt.de/politik/deutschland/article245867072/MinisterpraesidentKretschmannverteidigtAsylkompromissDasistdochkeineHaft.html",
+    //         "urlToImage": "https://img.welt.de/img/politik/deutschland/mobile245867076/8221356177ci16x9w1200/WinfriedKretschmann.jpg",
+    //         "publishedAt": "20230615T00:24:24Z",
+    //         "content": "BadenWürttembergs Ministerpräsident Winfried Kretschmann hat die EUEinigung auf verschärfte Asylverfahren energisch verteidigt. Arbeitsmigration müsse legalisiert, aber irreguläre Migration eingedä… [+1988 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Voatiengviet.com"
+    //         },
+    //         "author": "VietnameseWeb@voanews.com (Reuters)",
+    //         "title": "Hong Kong tìm cách triệt tiêu ‘quốc ca’ của người biểu tình ủng hộ dân chủ",
+    //         "description": "Nhiều phiên bản khác nhau của bài ca biểu tình ủng hộ dân chủ “Vinh quang cho Hong Kong” ngày 14/6 không còn trên iTunes Store của Apple, Spotify, KKBOX, Facebook và Instagram sau khi chính phủ tìm cách thông qua tòa án cấm hoàn toàn bài hát này.",
+    //         "url": "https://www.voatiengviet.com/a/hongkongtimcachtriettieuquoccacuanguoibieutinhunghodanchu/7137760.html",
+    //         "urlToImage": "https://gdb.voanews.com/B6BF9D1E03DB4BCBA12F5359B5C3DB6D.jpg",
+    //         "publishedAt": "20230615T00:07:53Z",
+    //         "content": "Nhiu phiên bn khác nhau ca bài ca biu tình ng h dân ch Vinh quang cho Hong Kong ngày 14/6 không còn trên iTunes Store ca Apple, Spotify, KKBOX, Facebook và Instagram sau khi chính ph tìm cách thông q… [+2784 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "New Zealand Herald"
+    //         },
+    //         "author": "Grant Bradley",
+    //         "title": "Game on: Qantas from Auckland to New York starts new era of competition",
+    //         "description": "What do you get in Qantas Business Class to the Big Apple?",
+    //         "url": "https://www.nzherald.co.nz/business/gameonqantasfromaucklandtonewyorkstartsneweraofcompetition/2MQEHL7GXJGRHAXA3CILCAISVU/",
+    //         "urlToImage": "https://www.nzherald.co.nz/resizer/iWdeb_nJhIeL96xZE4LOjH_1Z7o=/1200x675/smart/filters:quality(70)/cloudfrontapsoutheast2.images.arcpublishing.com/nzme/ENDLQY53E5BFTBALNBOCLFYC5M.jpg",
+    //         "publishedAt": "20230615T01:27:46Z",
+    //         "content": "Qantas flight QF3 lands at JFK Airport in New York. Photo / SuppliedCompetition on one of the longest routes in the world has started with the arrival in New York of Qantas flight QF3 nonstop from A… [+12668 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "New Zealand Herald"
+    //         },
+    //         "author": "Chris Keall",
+    //         "title": "Apple launches its Racial Equity and Justice Initiative in NZ with Te Pūkenga partnership",
+    //         "description": "Training, support and hardware for teachers at schools with high Māori and Pasifika rolls.",
+    //         "url": "https://www.nzherald.co.nz/business/applelaunchesitsracialequityandjusticeinitiativeinnzwithtepukengapartnership/M26I7JWIKZGLVCJZFCU3GGEG6U/",
+    //         "urlToImage": "https://www.nzherald.co.nz/resizer/y4yi8DkRUWSo7i32r8U8U0z0KTM=/1200x675/smart/filters:quality(70)/cloudfrontapsoutheast2.images.arcpublishing.com/nzme/LLV5VJLLWNEFHERQEAGBNVD5XU.JPG",
+    //         "publishedAt": "20230615T01:18:59Z",
+    //         "content": "Apple has launched its Racial Equity and Justice Initiative in New Zealand through a partnership with Te Pkenga, the mega tertiary institute that took over most industry training organisations and 16… [+4094 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Daily Mail"
+    //         },
+    //         "author": "Jimmy Briggs",
+    //         "title": "Nicole Trunfio shows off her figure in a black mini dress teamed with sexy boots in New York",
+    //         "description": "Nicole Trunfio used the New York City streets like her own personal catwalk on Wednesday when she took a stroll around the Big Apple.",
+    //         "url": "https://www.dailymail.co.uk/tvshowbiz/article12196591/NicoleTrunfioshowsfigureblackminidressteamedsexybootsNewYork.html",
+    //         "urlToImage": "https://i.dailymail.co.uk/1s/2023/06/15/01/721513330imagea54_1686789961087.jpg",
+    //         "publishedAt": "20230615T01:46:00Z",
+    //         "content": "Nicole Trunfio used the New York City streets like her own personal catwalk on Wednesday when she took a stroll around the Big Apple. \r\nThe Australian supermodel, 37, showed off her incredible figure… [+1934 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Independent.ie"
+    //         },
+    //         "author": "Apple",
+    //         "title": "Apple Mac Studio handles even the heaviest graphics projects",
+    //         "description": "Want a Mac that absolutely rips your heavylifting work tasks to shreds in seconds? That’ll be the updated Mac Studio range, from €2,449, with M2 Max and M2 Ultra chips on board.",
+    //         "url": "https://www.independent.ie/business/technology/applemacstudiohandleseventheheaviestgraphicsprojects/a38112866.html",
+    //         "urlToImage": "https://focus.independent.ie/thumbor/2oLDoHTrkltVp8GIpHOyxO8Mrg=/155x0:1842x1125/1687x1125/prodmhireland/89411dbcac464e229841f0de74c0c681/703507266cd6490a947fbe073d3ea514/IB%20Apple%20Mac%20Studio.jpg",
+    //         "publishedAt": "20230615T01:30:00Z",
+    //         "content": "Latest Apple offering has enough power to tackle any professional task\r\nWant a Mac that absolutely rips your heavylifting work tasks to shreds in seconds? Thatll be the updated Mac Studio range, fro… [+48 chars]"
+    //         },
+    //         {
+    //         "source": {
+    //         "id": null,
+    //         "name": "Mobileread.com"
+    //         },
+    //         "author": "Ken_Moorhead",
+    //         "title": "Apple Book and .plists",
+    //         "description": "Hello;\n\nI have this working, but I am curious why it works and why it is needed.\n\nI have an epub2 I made, and works fine in all the apps/devices I have so far tried.\n\nBut Apple Books gave me some fits; just a few! :angry:\n* If I dragged the book to (Apple) Bo…",
+    //         "url": "https://www.mobileread.com/forums/showthread.php?s=dff3d90ddbb945ad43754bd90cc691a9&p=4331578#post4331578",
+    //         "urlToImage": null,
+    //         "publishedAt": "20230615T00:41:21Z",
+    //         "content": "Hello;I have this working, but I am curious why it works and why it is needed.\r\nI have an epub2 I made, and works fine in all the apps/devices I have so far tried.\r\nBut Apple Books gave me some fits;… [+1117 chars]"
+    //         }
+    //         ]
+            
+    constructor(props){
+        super(props);
+        console.log('i am construtor')
+        this.state =({
+            articles :[],
+            loading:false,
+            page : 1,
+            totalResults:0
+
+
+        })
+    }
+    async componentDidMount (){
+        console.log("cdn");
+        // let url = `https://newsapi.org/v2/top-headlines?country='in'&apiKey=547a0faac7bb4d5ba3d1d5f0e4ea0be2&page=1&pagesize =${this.props.pagesize}`
+        let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=547a0faac7bb4d5ba3d1d5f0e4ea0be2&page=1&pagesize=${this.props.pagesize}`;
+        
+        this.setState({loading : true})
+        let data = await fetch(url);
+        let parsedData = await data.json();
+        console.log(parsedData);
+        this.setState({
+            articles: parsedData.articles,
+            totalResults: parsedData.totalResults,
+            loading: false
+        })
+    }
+    async updateNews(){
+        this.props.setProgress(10);
+        let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=547a0faac7bb4d5ba3d1d5f0e4ea0be2&page=${this.state.page}&pagesize=${this.props.pagesize}`;
+        
+        this.setState({loading : true})
+        let data = await fetch(url);
+        let parsedData = await data.json();
+        console.log(parsedData);
+        this.setState({
+            articles: parsedData.articles,
+            totalResults: parsedData.totalResults,
+            loading: false
+    })
+    this.props.setProgress(100);
+}
+ 
+fetchMoreData=async() => {
+    this.setState({page:this.state.page +1})
+    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=547a0faac7bb4d5ba3d1d5f0e4ea0be2&page=${this.state.page}&pagesize=${this.props.pagesize}`;
+    let data = await fetch(url);
+    let parsedData = await data.json();
+    console.log(parsedData);
+    this.setState({
+        articles: this.state.articles.concat(parsedData.articles),
+        totalResults: parsedData.totalResults
+})
+    
+
+};
+
+
+
+
+    // handleNextclick= async() =>{
+        // this.setState({page:this.state.page +1})
+        // this.updateNews();
+    //     if (!(this.state.page +1 > Math.ceil(this.state.totalResults/this.props.pagesize))){
+    //         let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category = ${this.props.category}&apiKey=547a0faac7bb4d5ba3d1d5f0e4ea0be2&page=${this.state.page +1}&pagesize=${this.props.pagesize}`;
+    //         this.setState({loading:true})
+    //         let data = await fetch(url);
+    //         let parsedData = await data.json();
+    //         console.log(parsedData);
+    //         this.setState({
+    //             articles:parsedData.articles,
+    //             page: this.state.page +1,
+    //             loading:false
+
+    //     })
+    // }  
+// }        
+    // handleprevclick= async()=>{
+        // this.setState({ page: this.state.page -1})
+        // this.updateNews();
+        // let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=547a0faac7bb4d5ba3d1d5f0e4ea0be2&page=${this.state.page -1}&pagesize=${this.props.pagesize}`;
+       
+        // this.setState({loading:true})
+        // let data = await fetch(url);
+        // let parsedData = await data.json();
+        // console.log(parsedData);
+        // this.setState({
+        //     articles:parsedData.articles,
+        //     page: this.state.page -1,
+        //     loading: false
+
+        // })
+    // } 
+
+   render() {
+     return (
+       <div className='container'>
+        <h2 className='text-center' style={{margin:'35px' }}>Newsmonkey-Top Headline</h2>
+        {this.state.loading &&<Spinner/>}
+        <InfiniteScroll
+          dataLength={this.state.articles.length}
+          next={this.fetchMoreData}
+          hasMore={this.state.articles.length !== this.state.totalResults}
+          loader={<Spinner/>}
+        >
+        <div className="container">    
+            <div className="row">
+            {/* {!this.state.loading && this.state.articles.map((element)=>{ */}
+                {this.state.articles.map((element)=>{
+                    return <div className="col-md-4" key={element.url}>
+                    {<Newsitem  title = {element.title?element.title:" "} description = {element.description?element.description: " "} imageurl = {element.urlToImage} newsurl={element.url} author= {element.author} date={element.publishedAt}/>}
+            </div>
+   })}        
+        </div> 
+        </div>
+        </InfiniteScroll>
+        {/* <div className="container d-flex justify-content-between">
+        <button disabled ={this.state.page<=1} type="button" class="btn btn-dark" onClick={this.handleprevclick}>&larr;Previous</button>        
+        <button disabled= {this.state.page +1 > Math.ceil(this.state.totalResults/this.props.pagesize)} type="button" class="btn btn-dark"onClick={this.handleNextclick}>Next &rarr;</button>
+        </div>
+          */}
+        </div>
+     )
+   }
+}
+
+ 
+ export default News
+ 
