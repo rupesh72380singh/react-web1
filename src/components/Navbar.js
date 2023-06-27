@@ -8,7 +8,7 @@ import React, { Component } from 'react'
       <div>
         <nav className="navbar navbar-expand-lg navbar light bg-light">
         <div className="container-fluid">
-            <a className="navbar-brand" href="/">NewsMonkey</a>
+            <a className="navbar-brand" href="/">World</a>
             <buthrefn className="navbar-hrefggler" type="buthrefn" data-bs-hrefggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-hrefggler-icon"></span>
             </buthrefn>
